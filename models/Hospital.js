@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const hospitalSchema = new mongoose.Schema({
+const HospitalSchema = new mongoose.Schema({
     name: {
         type: String,
         require: [true, 'Please add a name'],
@@ -32,6 +32,24 @@ const hospitalSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a region']
     }
+}, {
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
 });
 
-module.exports=mongoose.model('Hospital', hospitalSchema);
+// Cascadw delete appointments when a hospital is delete
+HospitalSchema.pre('remove', async function (next) {
+    console.log(`Appointments being removed from hospitals ${this._id}`);
+    await this.model('Appointment').deleteMany({hospital: this._id});
+    next();
+});
+
+// Reverse populate with virtuals
+HospitalSchema.virtual('appointments', {
+    ref: 'Appointment',
+    localField: '_id',
+    foreignField: 'hospital',
+    justOne: false
+})
+
+module.exports=mongoose.model('Hospital', HospitalSchema);

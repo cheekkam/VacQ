@@ -12,13 +12,15 @@ connectDB();
 // Route files
 const hospitals = require('./routes/hospitals')
 const auth = require('./routes/auth');
+const appointments = require('./routes/appointments');
 
 const app=express()
 
-// Body parser
+// Body parser -> Mount routers
 app.use(express.json());
 app.use('/api/v1/hospitals', hospitals);
 app.use('/api/v1/auth', auth);
+app.use('/api/v1/appointments', appointments);
 
 // Cookie parser
 app.use(cookieParser());
