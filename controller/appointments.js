@@ -13,10 +13,17 @@ exports.getAppointments = async (req,res,next) => {
             select: 'name province tel'
         });
     } else { // If you are an admin, you can see all
-        query = Appointment.find().populate({
-            path: 'hospital',
-            select: 'name province tel'
-        });
+        if (req.params.hospitalId) {
+            query=Appointment.find({hospital:req.params.hospitalId}).populate({
+                path:'hospital',
+                select: 'name province tel'
+            });
+        } else {
+            query=Appointment.find().populate({
+                path:'hospital',
+                select: 'name province tel'
+            });
+        }
     }
 
     try {

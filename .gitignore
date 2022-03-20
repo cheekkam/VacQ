@@ -2,3 +2,5 @@
 node_modules/*
 # ignore config file
 config/config.env
+# mysql shell
+mysql-shell-8.0.28-windows-x86-64bit/*
