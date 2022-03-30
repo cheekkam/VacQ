@@ -1,29 +1,59 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const connectDB = require('./config/db')
-const cookieParser = require('cookie-parser')
+const express = require('express');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+const cors = require('cors');
 
 // Load env vars
-dotenv.config({path:'./config/config.env'})
+dotenv.config({path:'./config/config.env'});
 
 // Connect to database
 connectDB();
 
 // Route files
-const hospitals = require('./routes/hospitals')
+const hospitals = require('./routes/hospitals');
 const auth = require('./routes/auth');
 const appointments = require('./routes/appointments');
 
 const app=express()
 
-// Body parser -> Mount routers
+// Body parser
 app.use(express.json());
-app.use('/api/v1/hospitals', hospitals);
-app.use('/api/v1/auth', auth);
-app.use('/api/v1/appointments', appointments);
 
 // Cookie parser
 app.use(cookieParser());
+
+// Sanitize data
+app.use(mongoSanitize());
+
+// Set security header
+app.use(helmet());
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Rate Limiting
+const limiters = rateLimit({
+    windowsMs: 10*60*1000, // 10 mins
+    max: 1
+});
+app.use(limiters);
+
+// Prevent http param pollutions
+app.use(hpp());
+
+// Enable CORS
+app.use(cors());
+
+// Mount routers
+app.use('/api/v1/hospitals', hospitals);
+app.use('/api/v1/auth', auth);
+app.use('/api/v1/appointments', appointments);
 
 const PORT=process.env.PORT || 5000;
 const server = app.listen(PORT, console.log('Server running in ', process.env.NODE_ENV, ' mode on port ', PORT));
