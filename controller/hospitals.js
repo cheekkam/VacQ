@@ -1,5 +1,5 @@
 const Hospital = require('../models/Hospital');
-const vacCenter = require('../models/vacCenter');
+// const vacCenter = require('../models/vacCenter');
 
 //@desc     Get all hospitals
 //@route    GET /api/v1/hospitals
