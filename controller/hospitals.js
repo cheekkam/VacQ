@@ -35,30 +35,30 @@ exports.getHospitals= async (req,res,next)=>{
         }
 
         // Pagination
-        const page = parseInt(req.query.page,10) || 1;
-        const limit = parseInt(req.query.limit,10) || 25;
-        const startindex = (page-1)*limit;
-        const endIndex = page*limit;
-        const total = await Hospital.countDocuments();
-        query = query.skip(startindex).limit(limit);
+        // const page = parseInt(req.query.page,10) || 1;
+        // const limit = parseInt(req.query.limit,10) || 25;
+        // const startindex = (page-1)*limit;
+        // const endIndex = page*limit;
+        // const total = await Hospital.countDocuments();
+        // query = query.skip(startindex).limit(limit);
         
         const hospitals = await query;
         console.log(JSON.parse(queryStr));
 
         // Pagination result
-        const pagination = {};
-        if (endIndex<total) {
-            pagination.next={
-                page: page+1,
-                limit
-            }
-        }
-        if (startindex>0) {
-            pagination.prev={
-                page: page-1,
-                limit
-            }
-        }
+        // const pagination = {};
+        // if (endIndex<total) {
+        //     pagination.next={
+        //         page: page+1,
+        //         limit
+        //     }
+        // }
+        // if (startindex>0) {
+        //     pagination.prev={
+        //         page: page-1,
+        //         limit
+        //     }
+        // }
 
         res.status(200).json({success:true, count:hospitals.length, data:hospitals});
     } catch(err) {
