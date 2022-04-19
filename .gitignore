@@ -1,6 +1,8 @@
-# ignore all node_modules
-node_modules/*
-# ignore config file
-# config/config.env
-# mysql shell
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
 mysql-shell-8.0.28-windows-x86-64bit/*
