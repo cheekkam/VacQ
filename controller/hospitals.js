@@ -20,45 +20,45 @@ exports.getHospitals= async (req,res,next)=>{
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match=>`$${match}`);
         query = Hospital.find(JSON.parse(queryStr)).populate('appointments');
 
-        // // Select fields
-        // if (req.query.select){
-        //     const fields=req.query.select.split(',').join(' ');
-        //     query = query.select(fields);
-        // }
+        // Select fields
+        if (req.query.select){
+            const fields=req.query.select.split(',').join(' ');
+            query = query.select(fields);
+        }
 
-        // // Sort
-        // if (req.query.sort){
-        //     const sortBy=req.query.sort.split(',').join(' ');
-        //     query = query.sort(sortBy);
-        // } else {
-        //     query = query.sort('createdAt');
-        // }
+        // Sort
+        if (req.query.sort){
+            const sortBy=req.query.sort.split(',').join(' ');
+            query = query.sort(sortBy);
+        } else {
+            query = query.sort('createdAt');
+        }
 
-        // // Pagination
-        // const page = parseInt(req.query.page,10) || 1;
-        // const limit = parseInt(req.query.limit,10) || 25;
-        // const startindex = (page-1)*limit;
-        // const endIndex = page*limit;
-        // const total = await Hospital.countDocuments();
-        // query = query.skip(startindex).limit(limit);
+        // Pagination
+        const page = parseInt(req.query.page,10) || 1;
+        const limit = parseInt(req.query.limit,10) || 25;
+        const startindex = (page-1)*limit;
+        const endIndex = page*limit;
+        const total = await Hospital.countDocuments();
+        query = query.skip(startindex).limit(limit);
         
         const hospitals = await query;
-        // console.log(JSON.parse(queryStr));
+        console.log(JSON.parse(queryStr));
 
-        // // Pagination result
-        // const pagination = {};
-        // if (endIndex<total) {
-        //     pagination.next={
-        //         page: page+1,
-        //         limit
-        //     }
-        // }
-        // if (startindex>0) {
-        //     pagination.prev={
-        //         page: page-1,
-        //         limit
-        //     }
-        // }
+        // Pagination result
+        const pagination = {};
+        if (endIndex<total) {
+            pagination.next={
+                page: page+1,
+                limit
+            }
+        }
+        if (startindex>0) {
+            pagination.prev={
+                page: page-1,
+                limit
+            }
+        }
 
         res.status(200).json({success:true, count:hospitals.length, data:hospitals});
     } catch(err) {
